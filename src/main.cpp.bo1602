@@ -1,0 +1,100 @@
+#include <iostream>
+#include <stdio.h>
+
+#ifdef USE_INTEL_MKL
+#define MKL_DIRECT_CALL 1
+#include "mkl.h"
+#endif
+
+#ifdef USE_INTEL_MKL
+#include "mkl_pardiso.h"
+#include "mkl_types.h"
+#endif
+
+#include <MathTools.h>
+#include <AuxiliaryFunctions.h>
+
+#include <chrono>
+#include <directsolver.h>
+
+int main(){
+    std::cout<<"Starting to Benchmark..."<<std::endl;
+    
+    std::cout<<std::endl<<"---- Environment -------------------------------------------------------------------------"<< std::endl;
+    #ifdef _CXX_VER
+        #define CXX_VER _CXX_VER
+    #endif
+    #ifdef _CXX_ID
+        #define CXX_ID _CXX_ID
+    #endif
+    std::cout << "  | Compiler     : " << CXX_ID << " version "<< CXX_VER << "." << std::endl;
+    #ifdef USE_INTEL_MKL
+    // Print MKL Version
+        int len = 198;
+        char buf[198];
+
+        mkl_get_version_string(buf, len);
+        std::cout << "  | MKL          : " << buf << std::endl;
+    
+    #else
+        std::cout << "  | MKL          : [NOT DETECTED]" << std::endl;
+    #endif
+    std::cout<<"------------------------------------------------------------------------------------------"<< std::endl << std::endl;
+       
+    
+	#ifdef USE_INTEL_MKL
+    
+    std::vector<double> _mat_val;
+    std::vector<int> _mat_ia_D;
+    std::vector<int> _mat_ja_D;
+    std::vector<double> _rhs;
+    std::vector<double> _sol;
+    
+    std::string iopath = "/home/ina/Dokumente/software/repos/benchmarksoft/iodir/";
+    std::string matprefix = "Test1e5_KDYN";
+    
+    //std::string matprefix = "Test_40";
+    _mat_val = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
+    _mat_ia_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(iopath + "input/" + matprefix + "_csr_ia.dat");
+    _mat_ja_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(iopath + "input/" + matprefix + "_csr_ja.dat");
+    // Type cast to MKL_INT
+    std::vector<MKL_INT> _mat_ia(_mat_ia_D.begin(), _mat_ia_D.end());
+    std::vector<MKL_INT> _mat_ja(_mat_ja_D.begin(), _mat_ja_D.end());
+    
+    _mat_ia_D.clear(); _mat_ja_D.clear();
+    
+    _rhs     = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + "RHS_ones_1e5.dat");
+    
+    _sol.resize(_mat_ia.size()-1);
+    
+    std::cout<<"Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val.size() << std::endl;
+    
+    
+    std::chrono::high_resolution_clock::time_point startTime;
+    std::chrono::high_resolution_clock::time_point stopTime;
+    std::cout<< ">> MKL running on #" << mkl_get_max_threads() << " OpenMPI cores."<< std::endl;
+    startTime = std::chrono::high_resolution_clock::now();
+    directsolver* pardisoSolver = new directsolver(_mat_ia, _mat_ja, _mat_val, true);
+    pardisoSolver->initializeDirectSolver();
+    pardisoSolver->factorize();
+    pardisoSolver->solve(_rhs,_sol);
+    pardisoSolver->deinitializeDirectSolver();
+    stopTime = std::chrono::high_resolution_clock::now();
+    std::cout<<"\n\nPARDISO: Performance | " << std::chrono::duration_cast<std::chrono::microseconds>(stopTime - startTime).count() << " micro sec | " << std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - startTime).count() << " milli sec | " << std::chrono::duration_cast<std::chrono::seconds>(stopTime - startTime).count() << " sec | " << std::endl;
+    
+    std::cout<<"Sol: "<<_sol.size()<< std::endl;
+	printf("\nSolve completed ... ");
+	printf("\nThe solution of the system is: ");
+	for (i = 0; i < 5; i++)
+	{
+		printf("\n x [%lld] = %f", i, _sol[i]);
+	}
+	printf("\n");
+    
+    
+    AuxiliaryFunctions::writeDoubleVectorDatFormat(iopath + "output/" + matprefix + "_SOL.dat", _sol);
+#endif
+    
+    
+    return 0;
+}
