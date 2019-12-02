@@ -1,4 +1,5 @@
+# BenchmarkSoft
+
 HelloWorld from BenchmarkSoft.
 
-Harikrishnan Sreekumar
-Braunschweig, Germany
+**Harikrishnan Sreekumar**, Braunschweig, Germany
