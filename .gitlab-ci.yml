@@ -15,10 +15,11 @@ build:
   #   - apt update && apt -y install make autoconf
   script:
     - cd build
-    - cmake ..
+    - pwd
+    - #cmake ..
   artifacts:
     paths:
-      - BenchmarkSoft
+      - #BenchmarkSoft
       # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
       # cache:
       #   paths:
@@ -28,4 +29,5 @@ build:
 test:
   stage: test
   script:
+    - pwd
     - ./runmytests.sh
