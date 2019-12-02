@@ -16,7 +16,7 @@ build:
   script:
     - cd build
     - pwd
-    - #cmake ..
+  #  - cmake ..
 
 # run tests using the binary built before
 test:
