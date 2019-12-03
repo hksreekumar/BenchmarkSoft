@@ -11,8 +11,8 @@
 
 MESSAGE("Finding MPI version ${OMPI_VER}...")
 
-set(MPIROOT_DIR "/home/ina/Dokumente/software/libs/openmpi-${OMPI_VER}")
-set(MPIROOT "/home/ina/Dokumente/software/libs/openmpi-${OMPI_VER}")
+set(MPIROOT_DIR "/opt/BS/openmpi-${OMPI_VER}")
+set(MPIROOT "/opt/BS/openmpi-${OMPI_VER}")
 message("MPIROOT_DIR is: ${MPIROOT_DIR}")
 
 set(MPI_INCLUDE_DIR "${MPIROOT_DIR}/gcc-opt/include")

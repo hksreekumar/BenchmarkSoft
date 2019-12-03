@@ -11,8 +11,8 @@
 
 MESSAGE("Finding PETSC version ${PETSC_VER}...")
 
-set(PETSCROOT_DIR "/home/ina/Dokumente/software/libs/petsc-${PETSC_VER}")
-set(PETSCROOT "/home/ina/Dokumente/software/libs/petsc-${PETSC_VER}")
+set(PETSCROOT_DIR "/opt/BS/petsc-${PETSC_VER}")
+set(PETSCROOT "/opt/BS/petsc-${PETSC_VER}")
 message("PETSCROOT_DIR is: ${PETSCROOT_DIR}")
 
 set(PETSC_INCLUDE_DIR "${PETSCROOT_DIR}/include;${PETSCROOT_DIR}/gcc-cxx-complex-o/include")
