@@ -21,5 +21,6 @@ test:
   stage: test
   script:
     - pwd
-    - ls bin64/
-    - ./bin64/BenchmarkSoft
+    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
+    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+#    - ./bin64/BenchmarkSoft
