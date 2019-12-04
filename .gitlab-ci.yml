@@ -21,4 +21,4 @@ test:
   stage: test
   script:
     - pwd
-    - ./runmytests.sh
+    - ./bin64/BenchmarkSoft
