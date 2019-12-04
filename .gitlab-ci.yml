@@ -21,4 +21,5 @@ test:
   stage: test
   script:
     - pwd
+    - ll
     - ./bin64/BenchmarkSoft
