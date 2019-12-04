@@ -11,8 +11,8 @@
 
 MESSAGE("Finding MKL...")
 
-set(MKLROOT_DIR "/home/ina/Dokumente/software/libs/intel/mkl")
-set(MKLROOT "/home/ina/Dokumente/software/libs/intel/mkl")
+set(MKLROOT_DIR "${LIB_HOME}/intel/mkl")
+set(MKLROOT "${LIB_HOME}/intel/mkl")
 message("MKLROOT_DIR is: ${MKLROOT_DIR}")
 
 set(MKL_INCLUDE_DIR "/home/ina/Dokumente/software/libs/intel/mkl/include")

@@ -78,7 +78,7 @@ int main(int argc,char **argv){
     std::vector<double> _sol;
     std::vector<MKL_Complex16> _rhs_c;
     std::vector<MKL_Complex16> _sol_c;
-    std::string iopath = "/home/ina/Dokumente/software/repos/benchmarksoft/iodir/";
+    std::string iopath = "../iodir/";
     /* Case: Jo */
     //std::string matprefix = "Test1e5_KDYN_UNSY";
     //std::string matprefix = "KK_n_jo";
@@ -185,7 +185,7 @@ int main(int argc,char **argv){
     std::vector<PetscComplex> _p_rhs_c;
     std::vector<PetscComplex> _p_sol_c;
     
-    std::string p_iopath = "/home/ina/Dokumente/software/repos/benchmarksoft/iodir/";
+    std::string p_iopath = "../iodir/";
     /* Case: Jo */
     //std::string matprefix = "Test1e5_KDYN_UNSY";
     //std::string matprefix = "KK_n_jo";
@@ -228,7 +228,6 @@ int main(int argc,char **argv){
     for(int i_ja = 0; i_ja < _p_mat_ja.size() ; i_ja++) {
         _p_mat_ja[i_ja] = _p_mat_ja[i_ja] - 1;
     }
-    
     
     PetscErrorCode p_error;
     Mat K_dy, F;
