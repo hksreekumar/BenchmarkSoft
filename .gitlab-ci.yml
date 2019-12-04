@@ -15,6 +15,7 @@ build:
     - pwd
     - cmake ..
     - make
+    - ../bin64/BenchmarkSoft
 
 # run tests using the binary built before
 test:
