@@ -2,7 +2,7 @@
 # use the official gcc image, based on debian
 # can use verions as well, like gcc:5.2
 # see https://hub.docker.com/_/gcc/
-image: cpp_bs_base:0.1.2
+image: hkks/benchmarksoft:0.1.3
  
 build:
   stage: build
