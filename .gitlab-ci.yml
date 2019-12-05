@@ -3,7 +3,13 @@
 # can use verions as well, like gcc:5.2
 # see https://hub.docker.com/_/gcc/
 image: hkks/benchmarksoft:0.1.4
- 
+
+stages:
+  - build
+  - deploy
+  - test
+  - performance
+
 build:
   stage: build
   # instead of calling g++ directly you can also use some build toolkit like make
@@ -18,14 +24,24 @@ build:
     - ../bin64/BenchmarkSoft
 
 # run tests using the binary built before
+deploy:
+  stage: deploy
+  script:
+    - pwd
+    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
+    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+
+# run tests using the binary built before
 test:
-  stage: test_acc
+  stage: test
   script:
     - pwd
     - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
     - ls /builds/hk.sreekumar/BenchmarkSoft/build
 #    - ./bin64/BenchmarkSoft
-  stage: test_performace
+
+performance:
+  stage: performance
   script:
     - pwd
     - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
