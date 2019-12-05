@@ -85,7 +85,7 @@ int main(int argc,char **argv){
     //std::string rhsname = matprefix + "_rhs.dat"; 
     
     /* Case: PlateSuperFine 261004 */
-    std::string matprefix = "261004_m_K";
+    std::string matprefix = "m_K";
     std::string rhsname = matprefix + "_rhs.dat"; 
     
     /* Case: PlateSuperFine visc_m */

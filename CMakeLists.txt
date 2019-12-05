@@ -29,9 +29,9 @@ set(GCC_VER 8)    # supports 4.8 , 7, 8
 ############################################################################
 # 1.2 Math Libraries
 ############################################################################
-option(USE_INTEL_MKL        "Use Intel MKL" OFF)
-option(USE_MPI              "Use MPI" ON)
-option(USE_PETSC            "Use PetSc" ON)
+option(USE_INTEL_MKL        "Use Intel MKL" ON)
+option(USE_MPI              "Use MPI" OFF)
+option(USE_PETSC            "Use PetSc" OFF)
 set(PETSC_VER 3.11.4)    # Supports 3.7.7 , 3.8.4 , 3.9.4, 3.10.4
 set(OMPI_VER 4.0.0)     # Supports 1.8.5 , 2.1.6 , 3.1.3, 4.0.0
 
