@@ -19,7 +19,13 @@ build:
 
 # run tests using the binary built before
 test:
-  stage: test
+  stage: test_acc
+  script:
+    - pwd
+    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
+    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+#    - ./bin64/BenchmarkSoft
+  stage: test_performace
   script:
     - pwd
     - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
