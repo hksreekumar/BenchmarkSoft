@@ -192,7 +192,7 @@ int main(int argc,char **argv){
     //std::string rhsname = matprefix + "_rhs.dat"; 
     
     /* Case: PlateSuperFine 261004 */
-    std::string p_matprefix = "261004_m_K";
+    std::string p_matprefix = "m_K";
     std::string p_rhsname = p_matprefix + "_rhs.dat"; 
     
     _p_mat_ia_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(p_iopath + "input/" + p_matprefix + "_csr_ia.dat");
