@@ -92,5 +92,7 @@ public:
 	* \author Harikrishnan Sreekumar
 	***********/    
     static void writeComplexVectorDatFormat(std::string _fileName, std::vector<PetscComplex> &_vector);
+    
+    static std::vector<PetscComplex> readPetscDoubleVectorDatFormatAsComplex(std::string _fileName);
 #endif
 };

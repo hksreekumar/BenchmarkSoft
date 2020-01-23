@@ -77,6 +77,22 @@ std::vector<MKL_Complex16> AuxiliaryFunctions::readComplexVectorDatFormat(std::s
 #endif
 
 #ifdef USE_PETSC
+std::vector<PetscComplex> AuxiliaryFunctions::readPetscDoubleVectorDatFormatAsComplex(std::string _fileName) {
+    std::cout<<" > AuxFun: Reading complex file " << _fileName <<"...";
+    std::vector<PetscComplex> temp;
+    
+    std::ifstream fin (_fileName);
+    double num_r;
+    fin >> std::scientific;
+
+    while(fin >> num_r){
+        PetscComplex __t = num_r;
+        temp.push_back(__t);
+    }
+    std::cout<<" Finished." << std::endl;
+    return temp;
+}
+
 std::vector<PetscComplex> AuxiliaryFunctions::readPetscComplexVectorDatFormat(std::string _fileName) {
     std::cout<<" > AuxFun: Reading complex file " << _fileName <<"...";
     std::vector<PetscComplex> temp;

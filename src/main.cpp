@@ -40,6 +40,14 @@ int main(int argc,char **argv){
     std::cout << "  | Compiler     : " << CXX_ID << " version "<< CXX_VER << "." << std::endl;
     int len = 198;
     char buf[198];
+    #ifdef USE_INTEL_MKL
+    // Print MKL Version
+    mkl_get_version_string(buf, len);
+    std::cout << "  | MKL          : " << buf << std::endl;
+#else
+    std::cout << "  | MKL          : [NOT DETECTED]" << std::endl;
+#endif
+    
 #ifdef USE_PETSC
     PetscGetVersion(buf, len);
     std::cout << "  | PETSC        : " << buf << std::endl;
@@ -52,13 +60,7 @@ int main(int argc,char **argv){
 #else
     std::cout << "  | MPI          : [NOT DETECTED]" << std::endl;    
 #endif
-#ifdef USE_INTEL_MKL
-    // Print MKL Version
-    mkl_get_version_string(buf, len);
-    std::cout << "  | MKL          : " << buf << std::endl;
-#else
-    std::cout << "  | MKL          : [NOT DETECTED]" << std::endl;
-#endif
+
         
     std::cout<<"------------------------------------------------------------------------------------------"<< std::endl << std::endl;
         
@@ -85,11 +87,25 @@ int main(int argc,char **argv){
     //std::string rhsname = matprefix + "_rhs.dat"; 
     
     /* Case: PlateSuperFine 261004 */
-    std::string matprefix = "m_K";
-    std::string rhsname = matprefix + "_rhs.dat"; 
+    //std::string matprefix = "m_K";
+    //std::string rhsname = matprefix + "_rhs.dat"; 
     
     /* Case: PlateSuperFine visc_m */
-    //std::string matprefix = "visc_m_K";
+    std::string matprefix = "visc_m_K";
+    std::string rhsname = matprefix + "_rhs.dat"; 
+    
+    /* Case: complex with unsymmetric setting */
+    //std::string matprefix = "ComplexSymmetric_FULLConfig";
+    //std::string rhsname = matprefix + "_rhs.dat"; 
+    
+    
+    /* Case: complex with symmetric setting */
+    //std::string matprefix = "ComplexSymmetric_UTConfig";
+    //std::string rhsname = matprefix + "_rhs.dat"; 
+    
+    
+    /* Case: real representation of complex with unsymmetric setting */
+    //std::string matprefix = "RealRep_FULLConfig";
     //std::string rhsname = matprefix + "_rhs.dat"; 
     
     
@@ -103,11 +119,13 @@ int main(int argc,char **argv){
             _mat_val_c = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
             _rhs_c     = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + rhsname);
             _sol_c.resize(_mat_ia.size()-1);
+            std::cout<<"Complex Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val_c.size() << std::endl;
         }
         else {
             _mat_val = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
             _rhs     = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + rhsname);
             _sol.resize(_mat_ia.size()-1);
+            std::cout<<"Real Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val.size() << std::endl;
         }
     } else {
         if(IS_COMPLEX){
@@ -121,14 +139,12 @@ int main(int argc,char **argv){
             _mat_val_c.clear();
             _rhs_c.clear();
             IS_COMPLEX = false;
+            std::cout<<"Complex Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val_c.size() << std::endl;
         }
     }
     
     
     _mat_ia_D.clear(); _mat_ja_D.clear();
-    
-    
-    std::cout<<"Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val.size() << std::endl;
     
     directsolver* pardisoSolver;
     if(IS_COMPLEX)
@@ -163,6 +179,9 @@ int main(int argc,char **argv){
 	}
 	printf("\n");
     
+    if(!IS_COMPLEX)
+            std::cout<<"\n Check against x[0] = "<< _sol[0] << " + i "<< _sol[261003] <<std::endl;
+    
     if(IS_COMPLEX)
         AuxiliaryFunctions::writeComplexVectorDatFormat(iopath + "output/" + matprefix + "_SOL_MKL.dat", _sol_c);
     else
@@ -187,13 +206,16 @@ int main(int argc,char **argv){
     
     std::string p_iopath = "../iodir/";
     /* Case: Jo */
-    //std::string matprefix = "Test1e5_KDYN_UNSY";
+    std::string p_matprefix = "visc_m_K";
+    //std::string p_rhsname = "RHS_ones_1e5.dat"; 
     //std::string matprefix = "KK_n_jo";
-    //std::string rhsname = matprefix + "_rhs.dat"; 
+    std::string p_rhsname = p_matprefix + "_rhs.dat";     
     
     /* Case: PlateSuperFine 261004 */
-    std::string p_matprefix = "m_K";
-    std::string p_rhsname = p_matprefix + "_rhs.dat"; 
+    //std::string p_matprefix = "m_K";
+    //std::string p_rhsname = p_matprefix + "_rhs.dat"; 
+    
+    
     
     _p_mat_ia_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(p_iopath + "input/" + p_matprefix + "_csr_ia.dat");
     
@@ -205,6 +227,7 @@ int main(int argc,char **argv){
         if(PETSC_IS_COMPLEX){
             _p_mat_val_c = AuxiliaryFunctions::readPetscComplexVectorDatFormat(p_iopath + "input/" + p_matprefix + "_csr_val.dat");
             _p_rhs_c     = AuxiliaryFunctions::readPetscComplexVectorDatFormat(p_iopath + "input/" + p_rhsname);
+            //_p_rhs_c     = AuxiliaryFunctions::readPetscDoubleVectorDatFormatAsComplex(p_iopath + "input/" + p_rhsname);
             //_p_sol_c.resize(_p_mat_ia.size()-1);
         }
         else {
@@ -218,7 +241,7 @@ int main(int argc,char **argv){
     
     _p_mat_ia_D.clear(); _p_mat_ja_D.clear();
     
-    std::cout<<"Input read: ia "<< _p_mat_ia.size() << " , ja: " << _p_mat_ja.size() << " , val: "<< _p_mat_val_c.size() << std::endl;
+    std::cout<<"Input read: ia "<< _p_mat_ia.size() << " , ja: " << _p_mat_ja.size() << " , val: "<< _p_mat_val_c.size() << ", rhs: "<< _p_rhs_c.size() << std::endl;
     PetscInt m_NumberOfUnknowns = _p_mat_ia.size() -1 ;
     
     /* -- Convert to zero based -- */
@@ -241,10 +264,6 @@ int main(int argc,char **argv){
     //if (size != 1) SETERRQ(PETSC_COMM_WORLD,1,"This is a uniprocessor example only!");
     p_error = PetscOptionsGetInt(NULL,NULL,"-n",&m_NumberOfUnknowns,NULL);CHKERRQ(p_error);
     p_error = PetscOptionsGetBool(NULL,NULL,"-nonzero_guess",&nonzeroguess,NULL);CHKERRQ(p_error);
-  
-    //p_error = MatCreateMPIAIJWithArrays( PETSC_COMM_WORLD , m_NumberOfUnknowns, m_NumberOfUnknowns,PETSC_DECIDE, PETSC_DECIDE, &_p_mat_ia[0], &_p_mat_ja[0], &_p_mat_val_c[0], &K_dy );
-    p_error = MatCreateSeqAIJWithArrays( PETSC_COMM_WORLD , m_NumberOfUnknowns, m_NumberOfUnknowns, &_p_mat_ia[0], &_p_mat_ja[0], &_p_mat_val_c[0], &K_dy );
-    
     its = 0;
 
     std::cout<< " > Solving linear system of equations using PETSC... " << std::endl;
@@ -268,12 +287,14 @@ int main(int argc,char **argv){
     switch(solverSetup){
         case 1:
             std::cout<< " > Initializing direct mumps solver "<<std::endl;
+            p_error = MatCreateMPIAIJWithArrays( PETSC_COMM_WORLD , m_NumberOfUnknowns, m_NumberOfUnknowns,PETSC_DECIDE, PETSC_DECIDE, &_p_mat_ia[0], &_p_mat_ja[0], &_p_mat_val_c[0], &K_dy );
             p_error = KSPSetType(m_KSP, KSPPREONLY); 
             p_error = PCSetType(m_PC, PCLU); 
             p_error = PCFactorSetMatSolverType(m_PC,"mumps"); 
             break;
         case 2:
             std::cout<< " > Initializing direct pardiso solver "<<std::endl;
+            p_error = MatCreateSeqAIJWithArrays( PETSC_COMM_WORLD , m_NumberOfUnknowns, m_NumberOfUnknowns, &_p_mat_ia[0], &_p_mat_ja[0], &_p_mat_val_c[0], &K_dy );    
             p_error = KSPSetType(m_KSP, KSPPREONLY); 
             p_error = PCSetType(m_PC, PCLU); 
             p_error = PCFactorSetMatSolverType(m_PC,"mkl_pardiso"); 
@@ -314,6 +335,7 @@ int main(int argc,char **argv){
     std::chrono::high_resolution_clock::time_point p_stopTime;
     p_startTime = std::chrono::high_resolution_clock::now();
     
+    printf("\nSolving... ");
     p_error = KSPSetOperators(m_KSP, K_dy, K_dy); 
     p_error = KSPSolve(m_KSP, m_RHS, m_x); 
     p_error = KSPGetIterationNumber(m_KSP, &its); 

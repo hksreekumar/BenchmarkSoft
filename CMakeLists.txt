@@ -20,11 +20,12 @@ set( CMAKE_VERBOSE_MAKEFILE off )
 ############################################################################
 # 1. Options
 ############################################################################
-SET(LIB_HOME /opt/BS)
+SET(LIB_HOME /software)
 ############################################################################
 # 1.1 Compiler Options
 ############################################################################
-option(USE_GCC_COMPILER "Use GCC Compiler" ON )
+option(USE_GCC_COMPILER "Use GCC Compiler" OFF )
+option(USE_INTEL_COMPILER "Use Intel Compiler" ON )
 set(GCC_VER 8)    # supports 4.8 , 7, 8
 ############################################################################
 # 1.2 Math Libraries
@@ -32,7 +33,7 @@ set(GCC_VER 8)    # supports 4.8 , 7, 8
 option(USE_INTEL_MKL        "Use Intel MKL" ON)
 option(USE_MPI              "Use MPI" OFF)
 option(USE_PETSC            "Use PetSc" OFF)
-set(PETSC_VER 3.11.4)    # Supports 3.7.7 , 3.8.4 , 3.9.4, 3.10.4
+set(PETSC_VER 3.10.4)    # Supports 3.7.7 , 3.8.4 , 3.9.4, 3.10.4
 set(OMPI_VER 4.0.0)     # Supports 1.8.5 , 2.1.6 , 3.1.3, 4.0.0
 
 add_definitions(-DPETSC_VER)
@@ -42,6 +43,9 @@ add_definitions(-DPETSC_VER)
 IF(${USE_GCC_COMPILER})
     set(CMAKE_C_COMPILER /usr/bin/gcc-${GCC_VER})
     set(CMAKE_CXX_COMPILER /usr/bin/g++-${GCC_VER})
+ELSEIF(${USE_INTEL_COMPILER})
+    set(CMAKE_C_COMPILER /software/intel/compilers_and_libraries_2019.3.199/linux/bin/intel64/icc)
+    set(CMAKE_CXX_COMPILER /software/intel/compilers_and_libraries_2019.3.199/linux/bin/intel64/icpc)
 ENDIF()
 
 project(BenchmarkSoft)

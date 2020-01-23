@@ -11,7 +11,7 @@
 
 MESSAGE("Finding MKL...")
 
-set(MKLBASE_DIR "${LIB_HOME}/..")
+set(MKLBASE_DIR "${LIB_HOME}")
 set(MKLROOT_DIR "${MKLBASE_DIR}/intel/mkl")
 set(MKLROOT "${MKLBASE_DIR}/intel/mkl")
 message("MKLROOT_DIR is: ${MKLROOT_DIR}")
