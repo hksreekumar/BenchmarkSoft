@@ -222,4 +222,4 @@ void cInputH5::readComplexVector(std::vector<MKL_Complex16>& _vector, std::strin
     delete myDataSpace;
 #endif
 }
-#ifdef
+#endif
