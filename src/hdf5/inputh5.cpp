@@ -106,37 +106,6 @@ void cInputH5::readComplexVector(std::vector<PetscComplex>& _vector, std::string
 #endif
 }
 
-#ifdef USE_INTEL_MKL
-void cInputH5::readComplexVector(std::vector<MKL_Complex16>& _vector, std::string _nameMainGroup, std::string _nameMatGroup, std::string _nameVecGroup)
-{
-#ifdef USE_HDF5
-    myDataSet = new H5::DataSet(cFileH5::getFileInstance()->openDataSet(_nameMainGroup + _nameMatGroup + _nameVecGroup));
-
-    myDataSpace = new H5::DataSpace(myDataSet->getSpace());
-    int rank = myDataSpace->getSimpleExtentNdims();
-    hsize_t dims_out[2];
-    int ndims = myDataSpace->getSimpleExtentDims(dims_out, NULL);
-
-    H5::CompType myComplexCompound((size_t)sizeof(elpasoComplexDouble));
-
-    std::vector<elpasoComplexDouble> convertPetscComplex;
-    convertPetscComplex.resize(dims_out[0]);
-    _vector.resize(dims_out[0]);
-
-    myComplexCompound.insertMember("real", HOFFSET(elpasoComplexDouble, real), H5::PredType::NATIVE_DOUBLE);
-    myComplexCompound.insertMember("imag", HOFFSET(elpasoComplexDouble, imag), H5::PredType::NATIVE_DOUBLE);
-
-    myDataSet->read(&convertPetscComplex[0], myComplexCompound);
-    for (size_t i = 0; i < convertPetscComplex.size(); i++)
-        _vector[i] = { convertPetscComplex[i].real, convertPetscComplex[i].imag };
-
-    myDataSpace->close();
-    myDataSet->close();
-    delete myDataSet;
-    delete myDataSpace;
-#endif
-}
-
 int cInputH5::readIntegerAttributeFromGroup(std::string _name, std::string _path)
 {
 #ifdef USE_HDF5
@@ -222,3 +191,35 @@ int cInputH5::getNumberOfMembersInGroup(std::string _path)
 #endif
 }
 #endif
+
+#ifdef USE_INTEL_MKL
+void cInputH5::readComplexVector(std::vector<MKL_Complex16>& _vector, std::string _nameMainGroup, std::string _nameMatGroup, std::string _nameVecGroup)
+{
+#ifdef USE_HDF5
+    myDataSet = new H5::DataSet(cFileH5::getFileInstance()->openDataSet(_nameMainGroup + _nameMatGroup + _nameVecGroup));
+
+    myDataSpace = new H5::DataSpace(myDataSet->getSpace());
+    int rank = myDataSpace->getSimpleExtentNdims();
+    hsize_t dims_out[2];
+    int ndims = myDataSpace->getSimpleExtentDims(dims_out, NULL);
+
+    H5::CompType myComplexCompound((size_t)sizeof(elpasoComplexDouble));
+
+    std::vector<elpasoComplexDouble> convertPetscComplex;
+    convertPetscComplex.resize(dims_out[0]);
+    _vector.resize(dims_out[0]);
+
+    myComplexCompound.insertMember("real", HOFFSET(elpasoComplexDouble, real), H5::PredType::NATIVE_DOUBLE);
+    myComplexCompound.insertMember("imag", HOFFSET(elpasoComplexDouble, imag), H5::PredType::NATIVE_DOUBLE);
+
+    myDataSet->read(&convertPetscComplex[0], myComplexCompound);
+    for (size_t i = 0; i < convertPetscComplex.size(); i++)
+        _vector[i] = { convertPetscComplex[i].real, convertPetscComplex[i].imag };
+
+    myDataSpace->close();
+    myDataSet->close();
+    delete myDataSet;
+    delete myDataSpace;
+#endif
+}
+#ifdef

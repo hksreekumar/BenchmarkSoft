@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <cstring>
 
 #ifdef USE_INTEL_MKL
 #define MKL_DIRECT_CALL 1
