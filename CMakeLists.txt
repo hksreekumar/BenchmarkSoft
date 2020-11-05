@@ -33,6 +33,7 @@ set(GCC_VER 8)    # supports 4.8 , 7, 8
 option(USE_INTEL_MKL        "Use Intel MKL" ON)
 option(USE_MPI              "Use MPI" OFF)
 option(USE_PETSC            "Use PetSc" OFF)
+option(USE_HDF5             "Use HDF5" ON)
 set(PETSC_VER 3.11.4)    # Supports 3.7.7 , 3.8.4 , 3.9.4, 3.10.4
 set(OMPI_VER 4.0.0)     # Supports 1.8.5 , 2.1.6 , 3.1.3, 4.0.0
 
@@ -107,6 +108,15 @@ IF (${USE_PETSC})
     add_definitions(-DUSE_PETSC)
     MESSAGE("PETSC status: ${PETSC_FOUND}")
     set(BenchmarkSoft_LIBS ${BenchmarkSoft_LIBS} ${PETSC_LIBRARIES})
+ENDIF()
+############################################################################
+## 3.4 Setting HDF5
+############################################################################
+IF (${USE_PETSC})
+    find_package(PETSC REQUIRED)
+    add_definitions(-DUSE_HDF5)
+    MESSAGE("HDF5 status: ${HDF5_FOUND}")
+    set(BenchmarkSoft_LIBS ${BenchmarkSoft_LIBS} ${HDF5_LIBRARIES})
 ENDIF()
 
 ############################################################################

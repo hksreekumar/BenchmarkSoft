@@ -19,6 +19,10 @@
 #include <mpi.h>
 #endif
 
+#ifdef USE_HDF5
+#include "fileh5.h"
+#endif // USE_HDF5
+
 #include <MathTools.h>
 #include <AuxiliaryFunctions.h>
 #include <chrono>
@@ -29,7 +33,21 @@
 
 int main(int argc,char **argv){
     std::cout<<"Starting to Benchmark in InA Server..."<<std::endl;
-    
+
+    int num_thread = 6;
+    std::string filename = "";
+
+    // Analyzing flags
+    for (size_t i = 1; i < argc && i + 1 < argc; i += 2) {
+        if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "-filename") == 0)
+            filename = argv[i + 1];
+        else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "-thread") == 0)
+            num_thread = std::stoi(argv[i + 1]);
+        else {
+            std::cout << "Flag not identified" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
     std::cout<<std::endl<<"---- Environment -------------------------------------------------------------------------"<< std::endl;
     #ifdef _CXX_VER
         #define CXX_VER _CXX_VER
@@ -67,7 +85,7 @@ int main(int argc,char **argv){
     bool IS_SYMMETRIC = false;
     bool IS_COMPLEX = true;
     bool IS_HACK = false;
-    int  NUM_THREADS = 6;
+    int  NUM_THREADS = num_thread;
     /*----------------------------*/
     
     std::vector<double> _mat_val;
@@ -78,6 +96,13 @@ int main(int argc,char **argv){
     std::vector<double> _sol;
     std::vector<MKL_Complex16> _rhs_c;
     std::vector<MKL_Complex16> _sol_c;
+
+
+#ifdef USE_HDF5
+    cFileH5::getInstance()->setGlobalFileName(filename);
+    cFileH5::getInstance()->openContainer(ELPASO_H5_READWRITE_FORCE);
+#endif
+
     std::string iopath = "../iodir/";
     /* Case: Jo */
     //std::string matprefix = "Test1e5_KDYN_UNSY";
@@ -92,25 +117,39 @@ int main(int argc,char **argv){
     //std::string matprefix = "visc_m_K";
     //std::string rhsname = matprefix + "_rhs.dat"; 
     
-    
+
+#ifndef USE_HDF5
     _mat_ia_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(iopath + "input/" + matprefix + "_csr_ia.dat");
     _mat_ja_D  = AuxiliaryFunctions::readIntegerVectorDatFormat(iopath + "input/" + matprefix + "_csr_ja.dat");
+#else
+    cInputH5::getInstance()->readIntegerVector(_mat_ia_D, "/SystemMatrices", "/DynamicStiffness", "/vecCsrIa");
+    cInputH5::getInstance()->readIntegerVector(_mat_ja_D, "/SystemMatrices", "/DynamicStiffness", "/vecCsrJa");
+#endif
+
     // Type cast to MKL_INT
     std::vector<MKL_INT> _mat_ia(_mat_ia_D.begin(), _mat_ia_D.end());
     std::vector<MKL_INT> _mat_ja(_mat_ja_D.begin(), _mat_ja_D.end());
     if(!IS_HACK) {
         if(IS_COMPLEX){
+#ifndef USE_HDF5
             _mat_val_c = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
             _rhs_c     = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + rhsname);
+#else
+            cInputH5::getInstance()->readComplexVector(_mat_val_c, "/SystemMatrices", "/DynamicStiffness", "/cmpCsrVal");
+            cInputH5::getInstance()->readComplexVector(_rhs_c, "/SystemMatrices", "/LoadVector", "/vecFemLoad");
+#endif
             _sol_c.resize(_mat_ia.size()-1);
         }
         else {
+#ifndef USE_HDF5
             _mat_val = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
             _rhs     = AuxiliaryFunctions::readDoubleVectorDatFormat(iopath + "input/" + rhsname);
+#endif
             _sol.resize(_mat_ia.size()-1);
         }
     } else {
         if(IS_COMPLEX){
+#ifndef USE_HDF5
             _mat_val_c = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + matprefix + "_csr_val.dat");
             _rhs_c     = AuxiliaryFunctions::readComplexVectorDatFormat(iopath + "input/" + rhsname);
             _sol.resize(_mat_ia.size()-1);
@@ -121,12 +160,11 @@ int main(int argc,char **argv){
             _mat_val_c.clear();
             _rhs_c.clear();
             IS_COMPLEX = false;
+#endif
         }
     }
     
-    
     _mat_ia_D.clear(); _mat_ja_D.clear();
-    
     
     std::cout<<"Input read: ia "<< _mat_ia.size() << " , ja: " << _mat_ja.size() << " , val: "<< _mat_val.size() << std::endl;
     
