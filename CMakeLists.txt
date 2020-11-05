@@ -10,6 +10,7 @@
 # Description: Support for elPaSo Development                              #
 ############################################################################
 
+project(BenchmarkSoft)
 
 ############################################################################
 # 0. CMAKE Basics
@@ -20,7 +21,7 @@ set( CMAKE_VERBOSE_MAKEFILE off )
 ############################################################################
 # 1. Options
 ############################################################################
-SET(LIB_HOME /opt/BS)
+SET(LIB_HOME C:/software/libs)
 ############################################################################
 # 1.1 Compiler Options
 ############################################################################
@@ -39,12 +40,33 @@ add_definitions(-DPETSC_VER)
 ############################################################################
 # 2. Setting C and C++ Compiler
 ############################################################################
-IF(${USE_GCC_COMPILER})
-    set(CMAKE_C_COMPILER /usr/bin/gcc-${GCC_VER})
-    set(CMAKE_CXX_COMPILER /usr/bin/g++-${GCC_VER})
+IF("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+	IF("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64")
+		SET(BMSOFT_OS_LIN_x86_64 FOUND)
+	ENDIF()
+ELSEIF("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+	IF("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "AMD64")
+		SET(BMSOFT_OS_WIN_x86_64 FOUND)
+	ENDIF()
 ENDIF()
 
-project(BenchmarkSoft)
+MESSAGE("> Build OS set to: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+
+# ---- Set default compiler ------------------------------------------------#
+ENABLE_LANGUAGE(C)
+ENABLE_LANGUAGE(CXX)
+IF(${BMSOFT_OS_LIN_x86_64})
+	IF(${USE_GCC_COMPILER})
+		set(CMAKE_C_COMPILER /usr/bin/gcc-${GCC_VER})
+		set(CMAKE_CXX_COMPILER /usr/bin/g++-${GCC_VER})
+	ENDIF()
+ENDIF()
+
+# ---- Identify target Compiler --------------------------------------------#
+MESSAGE("> Identified compilers")
+MESSAGE("              C   compiler | ID: ${CMAKE_C_COMPILER_ID} | VERSION: ${CMAKE_C_COMPILER_VERSION} | Path: ${CMAKE_C_COMPILER}")
+MESSAGE("              CXX compiler | ID: ${CMAKE_CXX_COMPILER_ID} | VERSION: ${CMAKE_CXX_COMPILER_VERSION} | Path: ${CMAKE_CXX_COMPILER}")
+
 set(BenchmarkSoft_SOURCES src/main.cpp)
 MESSAGE("C compiler is ${CMAKE_C_COMPILER_ID} and has version ${CMAKE_C_COMPILER_VERSION} \nC++ compiler is ${CMAKE_CXX_COMPILER_ID} and has version ${CMAKE_CXX_COMPILER_VERSION} " ) 
 
@@ -59,7 +81,7 @@ add_definitions(-DUSE_GCC_COMPILER)
 ############################################################################
 ## 3.1 Setting Intel MKL
 ############################################################################
-MESSAGE("Current source dir is" ${BenchmarkSoft_SOURCE_DIR})
+MESSAGE("Current source dir is " ${BenchmarkSoft_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${BenchmarkSoft_SOURCE_DIR}/cmake/modules)
 
 IF (${USE_INTEL_MKL})

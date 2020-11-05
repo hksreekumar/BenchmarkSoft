@@ -28,22 +28,22 @@ deploy:
   stage: deploy
   script:
     - pwd
-    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
-    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+    - ls /builds/sreekumar/BenchmarkSoft/bin64
+    - ls /builds/sreekumar/BenchmarkSoft/build
 
 # run tests using the binary built before
 test:
   stage: test
   script:
     - pwd
-    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
-    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+    - ls /builds/sreekumar/BenchmarkSoft/bin64
+    - ls /builds/sreekumar/BenchmarkSoft/build
 #    - ./bin64/BenchmarkSoft
 
 performance:
   stage: performance
   script:
     - pwd
-    - ls /builds/hk.sreekumar/BenchmarkSoft/bin64
-    - ls /builds/hk.sreekumar/BenchmarkSoft/build
+    - ls /builds/sreekumar/BenchmarkSoft/bin64
+    - ls /builds/sreekumar/BenchmarkSoft/build
 #    - ./bin64/BenchmarkSoft

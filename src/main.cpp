@@ -28,7 +28,7 @@
 #include <sstream>
 
 int main(int argc,char **argv){
-    std::cout<<"Starting to Benchmark..."<<std::endl;
+    std::cout<<"Starting to Benchmark in InA Server..."<<std::endl;
     
     std::cout<<std::endl<<"---- Environment -------------------------------------------------------------------------"<< std::endl;
     #ifdef _CXX_VER
